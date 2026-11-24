@@ -1,5 +1,8 @@
 # HightechCourse_Dev_AI
 
+## Zoom
+https://docs.google.com/document/d/1yQVbY05LtNrI0lK9rN_PInwqfkNrAh2cJIRj_XslMu4/edit?usp=sharing
+
 | Resource                     | Details                                                                    |
 | ---------------------------- | -------------------------------------------------------------------------- |
 | **AI provider - Openrouter** | [Get OpenRouter key](https://galamo.app.n8n.cloud/form/get-openrouter-key) |
