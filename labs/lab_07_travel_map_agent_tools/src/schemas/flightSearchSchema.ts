@@ -18,7 +18,7 @@ export const currencyExchangeSchema = z.object({
     .array(z.string())
     .min(1)
     .describe(
-      "List of prices in US Dollars to convert to NIS/ILS in one call. Pass every distinct USD flight price together instead of converting one at a time."
+      "List of USD prices to convert to NIS/ILS in one call (e.g. [\"900\", \"1200\"]). Pass every distinct flight price together instead of converting one at a time."
     ),
 });
 

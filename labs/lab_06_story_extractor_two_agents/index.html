@@ -514,8 +514,12 @@
       const MAX_LINES = 10;
       const MOODS = ["happy", "scary"];
 
+      // Same-origin when served by Express; fall back to API host if opened via file://
       const storyClient = axios.create({
-        baseURL: "",
+        baseURL:
+          window.location.protocol === "file:"
+            ? "http://localhost:3000"
+            : "",
         headers: { "Content-Type": "application/json" },
         timeout: 120_000,
       });

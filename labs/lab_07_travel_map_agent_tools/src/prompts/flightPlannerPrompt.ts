@@ -7,13 +7,13 @@ const CONTEXT_AND_TOOLS = `You have access to the following tools:
 - resolve_location: Resolve cities into lat/lon, ISO countryCode, country name, and flag image URL in one bulk call via placeNames. Prefer this for map data.
 - geocode_location: Convert a city name to latitude, longitude, and countryCode (use if you only need coords).
 - get_country_flag: Get a country flag image URL from a countryCode or country name.
-- currency_exchange: Convert multiple USD prices to NIS/ILS (Israeli New Shekel) in one bulk call via pricesInDollar. Use when the user asks for prices in shekels, NIS, or ILS. Exchange rate: 1 USD ≈ 3.5 NIS.`;
+- currency_exchange: Convert one or more USD prices to NIS/ILS (Israeli New Shekel) in one bulk call via pricesInDollar. Prefer converting every distinct flight price together. Use when the user asks for prices in shekels, NIS, or ILS. Exchange rate: 1 USD ≈ 3.5 NIS.`;
 
 const RULES = `- Use the flight_finder tool to search for flights when planning travel between cities.
 - ALWAYS call resolve_location ONCE with both the departure and destination cities in placeNames together (preferred), OR use geocode_location + get_country_flag for each city. Do not call resolve_location once per city. Put the returned name, lat, lon, countryCode, and flag into the from and to objects in your final JSON so the client can open a map.
-- When the user asks for NIS/ILS/shekels, call currency_exchange ONCE with every distinct USD flight price in pricesInDollar together. Do not convert prices one by one with separate tool calls, and never convert only one price and reuse it for other flights.
-- Do NOT invent or estimate USD prices. If flight_finder did not return a price for a flight, set that flight's price to "price unavailable" and do not include it in the currency_exchange bulk list.
-- Match each currency_exchange result to the corresponding flight's price field (e.g. "900 USD = 3150 NIS/ILS"). Different flights with different USD amounts must show different converted amounts.
+- When the user asks for NIS/ILS/shekels, call currency_exchange ONCE with all distinct USD flight prices in pricesInDollar together. Do not call it once per price. Never convert only one price and reuse it for other flights.
+- Do NOT invent or estimate USD prices. If flight_finder did not return a price for a flight, set that flight's price to "price unavailable" and do not include it in currency_exchange.
+- Match each currency_exchange result line to the corresponding flight's price field (e.g. "900 USD = 3150 NIS/ILS"). Different flights with different USD amounts must show different converted amounts.
 - Do NOT invent coordinates, country codes, or flag URLs—only use values returned by the location tools.
 - Your final response must be valid JSON without markdown code fences or any wrapper text—it must be ready to parse directly.
 - The message field should contain the trip planning summary based on the requested days, style, budget, and interests.

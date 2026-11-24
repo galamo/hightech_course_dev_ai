@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>An agent: reasoning, tools, MCP servers and other agents · Flow 13</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ground:#0f1720;--panel:#16212d;--line:#2a3a4b;--ink:#e6edf3;--muted:#8297ab;--dim:#4d6276;
+  --req:#5cc8ff;--res:#ffb547;--ok:#3ddc97;--tool:#b18cff;--sse:#5eead4;--err:#ff6b6b;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--ground);color:var(--ink);font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+a{color:var(--req)}
+.wrap{max-width:1200px;margin:0 auto;padding:28px 28px 64px}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+h1{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:700;font-size:clamp(26px,3.3vw,40px);margin:0;letter-spacing:-.015em}
+h2{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:600;font-size:22px;margin:0 0 14px}
+.meta{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);text-align:right;line-height:1.7}
+.meta a{color:var(--muted);text-decoration:none}
+.lede{color:var(--muted);margin:10px 0 18px;font-size:14px;line-height:1.5}
+.stage{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.stage svg{display:block;width:100%;height:auto}
+.node{opacity:.5;transition:opacity .35s ease}
+.node.lit{opacity:1}
+.node .box{fill:#111b26;stroke:var(--line);stroke-width:1.5;transition:stroke .35s ease,stroke-width .2s ease}
+.node.pulse .box{stroke-width:3}
+.node .t{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:17px;font-weight:600;fill:var(--ink)}
+.node .s{font-size:11.5px;fill:var(--muted)}
+.node .tag{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase}
+.wire{fill:none;stroke:var(--line);stroke-width:1.6;transition:stroke .3s ease}
+.wire.seen{stroke:var(--dim)}
+.wire.live{stroke-dasharray:6 6;animation:dash .9s linear infinite;stroke-width:2}
+@keyframes dash{to{stroke-dashoffset:-24}}
+.zone rect{fill:rgba(255,255,255,.012);stroke:var(--dim);stroke-dasharray:4 6;stroke-width:1}
+.zone text{font-size:10px;letter-spacing:.16em;text-transform:uppercase;fill:var(--dim)}
+.decor text{font-size:11px;fill:var(--muted)}
+.pkt text{font-size:12px;font-weight:500;fill:var(--ground)}
+.toast{position:absolute;right:18px;top:16px;background:rgba(61,220,151,.12);border:1px solid var(--ok);color:var(--ok);padding:9px 14px;border-radius:10px;font-size:13px;opacity:0;transform:translateY(-6px);transition:opacity .35s ease,transform .35s ease;pointer-events:none}
+.toast.show{opacity:1;transform:none}
+.caption{display:flex;gap:18px;align-items:center;margin:18px 4px 10px;min-height:70px}
+.num{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:54px;font-weight:700;color:var(--dim);line-height:1;min-width:76px;font-variant-numeric:tabular-nums}
+#cap{margin:0;font-size:15px;line-height:1.6}
+code{font-family:inherit;padding:1px 6px;border-radius:5px;background:rgba(255,255,255,.06);color:var(--ink)}
+code.req{color:var(--req)}code.res{color:var(--res)}code.ok{color:var(--ok)}code.tool{color:var(--tool)}code.sse{color:var(--sse)}code.err{color:var(--err)}
+.rail{display:flex;gap:4px;margin:4px 4px 16px}
+.rail i{flex:1;height:4px;border-radius:2px;background:var(--line);transition:background .3s ease}
+.rail i.done{background:var(--dim)}.rail i.on{background:var(--ink)}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.controls .sep{width:1px;height:22px;background:var(--line);margin:0 6px}
+button{font:inherit;font-size:12.5px;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:9px;padding:8px 14px;cursor:pointer}
+button:hover{border-color:var(--muted)}
+button[aria-pressed="true"]{border-color:var(--req);color:var(--req)}
+button:focus-visible,a:focus-visible{outline:2px solid var(--req);outline-offset:2px}
+.hint{font-size:11px;color:var(--dim);margin-left:auto}
+.glance{margin-top:48px}
+.glance .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:10px}
+.glance svg{display:block;width:100%;height:auto}
+.notes{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+.note{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.note strong{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:17px;font-weight:600;margin-bottom:6px}
+.note p{margin:0;color:var(--muted);font-size:12.5px;line-height:1.6}
+@media (max-width:860px){.notes{grid-template-columns:1fr 1fr}.hint{display:none}}
+@media (max-width:560px){.wrap{padding:16px 14px 48px}.notes{grid-template-columns:1fr}.num{font-size:38px;min-width:52px}.caption{gap:12px}#cap{font-size:13.5px}.meta{text-align:left}button{padding:7px 10px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>An agent: reasoning, tools, MCP servers and other agents</h1>
+    </div>
+    <div class="meta">Flow 13 · M1 / M3 / M5 · What an agent is<br><a href="index.html">All flows ↗</a></div>
+  </header>
+  <p class="lede">The model sits in a loop. It reasons about the goal, decides each step — call a tool, call an MCP server, delegate to another agent, ask for approval, or answer — and observes the result.</p>
+
+  <div class="stage">
+    <svg id="flow" viewBox="0 0 1080 620" role="img" aria-label="Animated diagram with the agent in the center: it receives a goal, reasons and plans, calls an MCP server for live data, a local tool for the SLA calculation, stores results in memory, decides to delegate impact analysis to a subagent, queries a remote MCP knowledge server, asks a human to approve a ticket, creates it through MCP and answers the user.">
+      <defs>
+        <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
+          <path d="M28 0H0V28" fill="none" stroke="#2a3a4b" stroke-opacity=".35" stroke-width="1"/>
+        </pattern>
+        <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+          <feGaussianBlur stdDeviation="4" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <rect width="1080" height="620" fill="url(#grid)"/>
+
+      <path class="wire" id="w-u-a" d="M180,310 C281,310 319,310 420,310"/>
+      <path class="wire" id="w-a-th" d="M540,235 C540,195 540,180 540,140"/>
+      <path class="wire" id="w-a-tool" d="M420,260 C349,260 411,112 340,112"/>
+      <path class="wire" id="w-a-mcp" d="M660,260 C737,260 683,105 760,105"/>
+      <path class="wire" id="w-a-rem" d="M660,310 C702,310 718,310 760,310"/>
+      <path class="wire" id="w-a-sub" d="M660,360 C735,360 685,508 760,508"/>
+      <path class="wire" id="w-a-mem" d="M460,385 C460,488 230,367 230,470"/>
+      <path class="wire" id="w-a-ap" d="M580,385 C580,425 540,430 540,470"/>
+      <g class="node" data-x="420" data-y="235" data-w="240" data-h="150" data-drift="1">
+        <rect class="box" x="420" y="235" width="240" height="150" rx="14"/>
+        <text class="tag" x="436" y="257" style="fill:var(--tool)">the model</text>
+        <text class="t" x="436" y="279">Agent</text>
+        <text class="s" x="436" y="299">LLM in a loop</text>
+      </g>
+      <g class="node" data-x="420" data-y="50" data-w="240" data-h="90" data-drift="1">
+        <rect class="box" x="420" y="50" width="240" height="90" rx="14"/>
+        <text class="tag" x="436" y="72" style="fill:var(--tool)">thinking</text>
+        <text class="t" x="436" y="94">Reasoning</text>
+        <text class="s" x="436" y="114">plan · decide · reflect</text>
+      </g>
+      <g class="node" data-x="30" data-y="265" data-w="150" data-h="90" data-drift="0">
+        <rect class="box" x="30" y="265" width="150" height="90" rx="14"/>
+        <text class="tag" x="46" y="287" style="fill:var(--req)">client</text>
+        <text class="t" x="46" y="309">User</text>
+        <text class="s" x="46" y="329">gives a goal</text>
+      </g>
+      <g class="node" data-x="110" data-y="70" data-w="230" data-h="84" data-drift="0">
+        <rect class="box" x="110" y="70" width="230" height="84" rx="14"/>
+        <text class="tag" x="126" y="92" style="fill:var(--tool)">tool</text>
+        <text class="t" x="126" y="114">Tool: calculate_sla</text>
+        <text class="s" x="126" y="134">local function</text>
+      </g>
+      <g class="node" data-x="760" data-y="60" data-w="270" data-h="90" data-drift="0">
+        <rect class="box" x="760" y="60" width="270" height="90" rx="14"/>
+        <text class="tag" x="776" y="82" style="fill:var(--tool)">mcp server</text>
+        <text class="t" x="776" y="104">MCP · orbit-ops</text>
+        <text class="s" x="776" y="124">stdio · shipments + tickets</text>
+      </g>
+      <g class="node" data-x="760" data-y="265" data-w="270" data-h="90" data-drift="0">
+        <rect class="box" x="760" y="265" width="270" height="90" rx="14"/>
+        <text class="tag" x="776" y="287" style="fill:var(--sse)">mcp server</text>
+        <text class="t" x="776" y="309">MCP · knowledge</text>
+        <text class="s" x="776" y="329">HTTP · search_runbooks</text>
+      </g>
+      <g class="node" data-x="760" data-y="460" data-w="270" data-h="96" data-drift="1">
+        <rect class="box" x="760" y="460" width="270" height="96" rx="14"/>
+        <text class="tag" x="776" y="482" style="fill:var(--req)">another agent</text>
+        <text class="t" x="776" y="504">Subagent: impact-analyst</text>
+        <text class="s" x="776" y="524">own context · read-only tools</text>
+      </g>
+      <g class="node" data-x="110" data-y="470" data-w="240" data-h="84" data-drift="0">
+        <rect class="box" x="110" y="470" width="240" height="84" rx="14"/>
+        <text class="tag" x="126" y="492" style="fill:var(--sse)">state</text>
+        <text class="t" x="126" y="514">Context &amp; memory</text>
+        <text class="s" x="126" y="534">results · notes · history</text>
+      </g>
+      <g class="node" data-x="420" data-y="470" data-w="240" data-h="84" data-drift="0">
+        <rect class="box" x="420" y="470" width="240" height="84" rx="14"/>
+        <text class="tag" x="436" y="492" style="fill:var(--res)">guard</text>
+        <text class="t" x="436" y="514">Human approval</text>
+        <text class="s" x="436" y="534">required for writes</text>
+      </g>
+
+      <g id="pkts"></g>
+    </svg>
+    <div class="toast" id="toast" role="status">✓ Goal met · 4 decisions · 2 MCP servers · 1 subagent · 1 approval</div>
+  </div>
+
+  <div class="caption">
+    <div class="num" id="num">01</div>
+    <p id="cap" aria-live="polite"></p>
+  </div>
+  <div class="rail" id="rail" aria-hidden="true"></div>
+  <div class="controls">
+    <button id="bPlay" aria-pressed="false">Pause</button>
+    <button id="bReplay">Replay</button>
+    <button id="bSound" aria-pressed="true">Sound On</button>
+    <span class="sep"></span>
+    <button class="spd" data-s="0.5" aria-pressed="false">0.5x</button>
+    <button class="spd" data-s="1" aria-pressed="true">1x</button>
+    <button class="spd" data-s="1.5" aria-pressed="false">1.5x</button>
+    <span class="hint">Space pause · R replay · ←/→ step · ?at=&lt;phase&gt; to freeze</span>
+  </div>
+
+  <section class="glance">
+    <h2>At a glance</h2>
+    <div class="card">
+      <svg viewBox="0 0 1080 268" role="img" aria-label="An agent: reasoning, tools, MCP servers and other agents — summary diagram">
+      <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4d6276"/></marker></defs>
+      <text x="20" y="64" style="font:600 11px IBM Plex Mono,monospace;letter-spacing:.14em;text-transform:uppercase;fill:#8297ab">loop</text>
+      <rect x="140" y="28" width="157" height="58" rx="12" style="fill:#111b26;stroke:var(--req);stroke-width:1.5"/>
+      <text x="154" y="53" style="font:600 15px Bricolage Grotesque,sans-serif;fill:#e6edf3">Goal</text>
+      <rect x="331" y="28" width="157" height="58" rx="12" style="fill:#111b26;stroke:var(--tool);stroke-width:1.5"/>
+      <text x="345" y="53" style="font:600 15px Bricolage Grotesque,sans-serif;fill:#e6edf3">Reason</text>
+      <text x="345" y="72" style="font:11px IBM Plex Mono,monospace;fill:#8297ab">plan · decide</text>
+      <line x1="301" y1="57" x2="327" y2="57" stroke="#4d6276" stroke-width="1.6" marker-end="url(#ah)"/>
+      <rect x="522" y="28" width="157" height="58" rx="12" style="fill:#111b26;stroke:var(--tool);stroke-width:1.5"/>
+      <text x="536" y="53" style="font:600 15px Bricolage Grotesque,sans-serif;fill:#e6edf3">Act</text>
+      <text x="536" y="72" style="font:11px IBM Plex Mono,monospace;fill:#8297ab">tool / MCP / agent</text>
+      <line x1="492" y1="57" x2="518" y2="57" stroke="#4d6276" stroke-width="1.6" marker-end="url(#ah)"/>
+      <rect x="712" y="28" width="157" height="58" rx="12" style="fill:#111b26;stroke:var(--sse);stroke-width:1.5"/>
+      <text x="726" y="53" style="font:600 15px Bricolage Grotesque,sans-serif;fill:#e6edf3">Observe</text>
+      <text x="726" y="72" style="font:11px IBM Plex Mono,monospace;fill:#8297ab">result → memory</text>
+      <line x1="682" y1="57" x2="708" y2="57" stroke="#4d6276" stroke-width="1.6" marker-end="url(#ah)"/>
+      <rect x="903" y="28" width="157" height="58" rx="12" style="fill:#111b26;stroke:var(--ok);stroke-width:1.5"/>
+      <text x="917" y="53" style="font:600 15px Bricolage Grotesque,sans-serif;fill:#e6edf3">Answer</text>
+      <text x="917" y="72" style="font:11px IBM Plex Mono,monospace;fill:#8297ab">when goal met</text>
+      <line x1="873" y1="57" x2="899" y2="57" stroke="#4d6276" stroke-width="1.6" marker-end="url(#ah)"/>
+      <path d="M791,88 C791,126 409,126 409,92" fill="none" stroke="#ffb547" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ah)"/>
+      <text x="600" y="128" text-anchor="middle" style="font:11px IBM Plex Mono,monospace;fill:#ffb547">repeat until done or maxTurns</text>
+      <text x="20" y="160" style="font:600 11px IBM Plex Mono,monospace;letter-spacing:.14em;text-transform:uppercase;fill:#8297ab">options</text>
+      <rect x="140" y="124" width="157" height="58" rx="12" style="fill:#111b26;stroke:var(--tool);stroke-width:1.5"/>
+      <text x="154" y="149" style="font:600 15px Bricolage Grotesque,sans-serif;fill:#e6edf3">Local tool</text>
+      <text x="154" y="168" style="font:11px IBM Plex Mono,monospace;fill:#8297ab">function</text>
+      <rect x="331" y="124" width="157" height="58" rx="12" style="fill:#111b26;stroke:var(--tool);stroke-width:1.5"/>
+      <text x="345" y="149" style="font:600 15px Bricolage Grotesque,sans-serif;fill:#e6edf3">MCP · stdio</text>
+      <text x="345" y="168" style="font:11px IBM Plex Mono,monospace;fill:#8297ab">local server</text>
+      <line x1="301" y1="153" x2="327" y2="153" stroke="#4d6276" stroke-width="1.6" marker-end="url(#ah)"/>
+      <rect x="522" y="124" width="157" height="58" rx="12" style="fill:#111b26;stroke:var(--sse);stroke-width:1.5"/>
+      <text x="536" y="149" style="font:600 15px Bricolage Grotesque,sans-serif;fill:#e6edf3">MCP · HTTP</text>
+      <text x="536" y="168" style="font:11px IBM Plex Mono,monospace;fill:#8297ab">remote server</text>
+      <line x1="492" y1="153" x2="518" y2="153" stroke="#4d6276" stroke-width="1.6" marker-end="url(#ah)"/>
+      <rect x="712" y="124" width="157" height="58" rx="12" style="fill:#111b26;stroke:var(--req);stroke-width:1.5"/>
+      <text x="726" y="149" style="font:600 15px Bricolage Grotesque,sans-serif;fill:#e6edf3">Subagent</text>
+      <text x="726" y="168" style="font:11px IBM Plex Mono,monospace;fill:#8297ab">isolated context</text>
+      <line x1="682" y1="153" x2="708" y2="153" stroke="#4d6276" stroke-width="1.6" marker-end="url(#ah)"/>
+      <rect x="903" y="124" width="157" height="58" rx="12" style="fill:#111b26;stroke:var(--res);stroke-width:1.5"/>
+      <text x="917" y="149" style="font:600 15px Bricolage Grotesque,sans-serif;fill:#e6edf3">Human</text>
+      <text x="917" y="168" style="font:11px IBM Plex Mono,monospace;fill:#8297ab">approve writes</text>
+      <line x1="873" y1="153" x2="899" y2="153" stroke="#4d6276" stroke-width="1.6" marker-end="url(#ah)"/>
+      </svg>
+    </div>
+    <div class="notes">
+      <div class="note"><strong>Reasoning decides the path</strong><p>The model plans, picks the next step, and reflects on results — the loop is what makes it an agent.</p></div>
+      <div class="note"><strong>Tool, MCP server or agent?</strong><p>Function for local logic, MCP for shared systems, a subagent for heavy or specialised work in its own context.</p></div>
+      <div class="note"><strong>Guard the writes</strong><p>Reads run freely. Anything that changes the world goes through human approval.</p></div>
+    </div>
+  </section>
+</div>
+
+<script>
+(() => {
+"use strict";
+
+/* ================================================================
+   PHASES — edit captions here.
+   k     : unique key  (open the page with ?at=<k> to freeze on it)
+   d     : duration in seconds (at 1x)
+   step  : big number shown in the caption row
+   from  : [x, y] start of the packet, in SVG viewBox units
+   to    : [x, y] end of the packet (the component at this point lights up)
+           from === to  →  no travel, the component just pulses ("thinking")
+   label : text on the packet pill ('' = dot only)
+   c     : colour token  req | res | ok | tool | sse | err
+   wire  : id of the wire to light; the packet follows that path (null = straight line)
+   txt   : caption HTML (use <code class="req|res|ok|tool|sse|err">)
+   tone  : whoosh | blip | chime | soft | resolve | rest
+   also  : (optional) extra parallel packets [{from, to, label, wire}]
+   ================================================================ */
+const P = [
+  // 01 · goal
+  { k: "goal", d: 2.4, step: 1, from: [180, 310], to: [420, 310], label: "“4471 is late — handle it”", c: "req", wire: "u-a", txt: "An agent receives a <em>goal</em>, not a single question. It will choose its own steps.", tone: "whoosh" },
+  // 02 · plan
+  { k: "plan", d: 2.6, step: 2, from: [540, 235], to: [540, 140], label: "plan: facts → impact → act", c: "tool", wire: "a-th", txt: "<code class='tool'>Reasoning</code>: before acting, the model thinks — breaks the goal into steps and decides what it needs.", tone: "soft" },
+  // 03 · decide1
+  { k: "decide1", d: 2.4, step: 3, from: [540, 140], to: [540, 235], label: "live data needed → MCP tool", c: "tool", wire: "a-th", txt: "Decision 1: live facts come from a tool. No other agent needed for this step.", tone: "soft" },
+  // 04 · mcp
+  { k: "mcp", d: 2.2, step: 4, from: [660, 260], to: [760, 105], label: "tools/call get_shipment", c: "tool", wire: "a-mcp", txt: "Tools are served by MCP servers. <code class='tool'>orbit-ops</code> runs locally over stdio.", tone: "blip" },
+  // 05 · mcpback
+  { k: "mcpback", d: 2.0, step: 5, from: [760, 105], to: [660, 260], label: "HELD · HFA · 6h12m", c: "ok", wire: "a-mcp", txt: "Real data replaces guessing.", tone: "soft" },
+  // 06 · tool
+  { k: "tool", d: 2.2, step: 6, from: [420, 260], to: [340, 112], label: "calculate_sla(4471)", c: "tool", wire: "a-tool", txt: "A local tool — a plain function in the app — does the deterministic part: SLA arithmetic.", tone: "blip" },
+  // 07 · toolback
+  { k: "toolback", d: 2.0, step: 7, from: [340, 112], to: [420, 260], label: "BREACH +2h12m", c: "ok", wire: "a-tool", txt: "Exact numbers from code, not from the model.", tone: "soft" },
+  // 08 · memory
+  { k: "memory", d: 2.2, step: 8, from: [460, 385], to: [230, 470], label: "note: platinum breach", c: "sse", wire: "a-mem", txt: "Every result is appended to the context — the agent's working memory for this task.", tone: "soft" },
+  // 09 · think2
+  { k: "think2", d: 2.6, step: 9, from: [540, 235], to: [540, 140], label: "impact = 50k log lines?", c: "tool", wire: "a-th", txt: "Reasoning again: impact analysis means heavy reading. Do it here, or delegate?", tone: "soft" },
+  // 10 · decide2
+  { k: "decide2", d: 2.4, step: 10, from: [540, 140], to: [540, 235], label: "delegate → isolated context", c: "tool", wire: "a-th", txt: "Decision 2: call another agent, so the noisy reading stays out of the main context.", tone: "soft" },
+  // 11 · delegate
+  { k: "delegate", d: 2.4, step: 11, from: [660, 360], to: [760, 508], label: "brief: who is hit on R-12?", c: "req", wire: "a-sub", txt: "The subagent gets a brief, its own read-only tools and its own context window.", tone: "whoosh" },
+  // 12 · subwork
+  { k: "subwork", d: 2.6, step: 12, from: [895, 538], to: [895, 538], label: "", c: "req", wire: null, txt: "It reasons and calls its own tools independently. The parent never sees its transcript.", tone: "soft" },
+  // 13 · subback
+  { k: "subback", d: 2.4, step: 13, from: [760, 508], to: [660, 360], label: "2 customers · 1 platinum", c: "ok", wire: "a-sub", txt: "Only a compact summary returns.", tone: "chime" },
+  // 14 · kb
+  { k: "kb", d: 2.2, step: 14, from: [660, 310], to: [760, 310], label: "search_runbooks “customs hold”", c: "sse", wire: "a-rem", txt: "A second MCP server, remote over Streamable HTTP, serves company knowledge.", tone: "blip" },
+  // 15 · kbback
+  { k: "kbback", d: 2.0, step: 15, from: [760, 310], to: [660, 310], label: "runbook §3: P1 for platinum", c: "sse", wire: "a-rem", txt: "The procedure says: platinum breach → P1 ticket.", tone: "soft" },
+  // 16 · decide3
+  { k: "decide3", d: 2.6, step: 16, from: [540, 235], to: [540, 140], label: "act: P1 ticket = write", c: "tool", wire: "a-th", txt: "Decision 3: take an action. Changing the world is a write, so it needs a human.", tone: "soft" },
+  // 17 · approve
+  { k: "approve", d: 2.2, step: 17, from: [580, 385], to: [540, 470], label: "approve create_ticket?", c: "res", wire: "a-ap", txt: "Human-in-the-loop: the host asks before any write runs.", tone: "blip" },
+  // 18 · approved
+  { k: "approved", d: 2.0, step: 18, from: [540, 470], to: [580, 385], label: "✓ approved", c: "ok", wire: "a-ap", txt: "Approved.", tone: "soft" },
+  // 19 · ticket
+  { k: "ticket", d: 2.2, step: 19, from: [660, 260], to: [760, 105], label: "tools/call create_ticket P1", c: "res", wire: "a-mcp", txt: "The write goes through the same MCP server.", tone: "blip" },
+  // 20 · ticketback
+  { k: "ticketback", d: 2.0, step: 20, from: [760, 105], to: [660, 260], label: "OPS-219", c: "ok", wire: "a-mcp", txt: "Ticket created.", tone: "soft" },
+  // 21 · decide4
+  { k: "decide4", d: 2.2, step: 21, from: [540, 235], to: [540, 140], label: "goal met? yes → answer", c: "tool", wire: "a-th", txt: "Decision 4: reflect — is the goal met? Yes, so stop the loop instead of calling more tools.", tone: "soft" },
+  // 22 · answer
+  { k: "answer", d: 4.0, step: 22, from: [420, 310], to: [180, 310], label: "“Breach · OPS-219 · 2 clients”", c: "ok", wire: "u-a", txt: "A grounded answer with actions taken. Same model as flow 12 — the loop, tools, MCP, other agents and guards make it an agent.", tone: "resolve" },
+];
+
+/* ---------- setup ---------- */
+const NS = "http://www.w3.org/2000/svg";
+const svg = document.getElementById("flow");
+const pktLayer = document.getElementById("pkts");
+const capEl = document.getElementById("cap");
+const numEl = document.getElementById("num");
+const toastEl = document.getElementById("toast");
+const railEl = document.getElementById("rail");
+const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const nodes = [...svg.querySelectorAll(".node")].map((g, i) => ({
+  g, rect: g.querySelector(".box"),
+  x: +g.dataset.x, y: +g.dataset.y, w: +g.dataset.w, h: +g.dataset.h,
+  drift: g.dataset.drift === "1", seed: i * 1.7
+}));
+const wireEl = id => (id ? document.getElementById("w-" + id) : null);
+
+function nodeAt(pt) {
+  let best = null, bestArea = Infinity;
+  for (const n of nodes) {
+    const m = 8;
+    if (pt[0] >= n.x - m && pt[0] <= n.x + n.w + m && pt[1] >= n.y - m && pt[1] <= n.y + n.h + m) {
+      const a = n.w * n.h; if (a < bestArea) { best = n; bestArea = a; }
+    }
+  }
+  return best;
+}
+
+const starts = []; let total = 0;
+P.forEach(p => { starts.push(total); total += p.d; });
+P.forEach(p => { p.targets = [p.to, ...(p.also || []).map(a => a.to)].map(nodeAt).filter(Boolean); });
+
+P.forEach(() => railEl.appendChild(document.createElement("i")));
+const segs = [...railEl.children];
+
+/* ---------- packets ---------- */
+function makePacket(label, c) {
+  const g = document.createElementNS(NS, "g"); g.setAttribute("class", "pkt");
+  const col = `var(--${c})`;
+  if (label) {
+    const w = Math.max(28, label.length * 7.25 + 22);
+    const r = document.createElementNS(NS, "rect");
+    r.setAttribute("x", -w / 2); r.setAttribute("y", -38); r.setAttribute("width", w); r.setAttribute("height", 22); r.setAttribute("rx", 11);
+    r.style.fill = col;
+    const t = document.createElementNS(NS, "text");
+    t.setAttribute("x", 0); t.setAttribute("y", -23); t.setAttribute("text-anchor", "middle"); t.textContent = label;
+    g.append(r, t);
+  }
+  const halo = document.createElementNS(NS, "circle"); halo.setAttribute("r", 13); halo.style.fill = col; halo.style.opacity = .22;
+  const dot = document.createElementNS(NS, "circle"); dot.setAttribute("r", 6); dot.style.fill = col; dot.setAttribute("filter", "url(#glow)");
+  g.append(halo, dot); pktLayer.appendChild(g);
+  return g;
+}
+function trackFor(from, to, wire) {
+  const path = wireEl(wire);
+  if (path && (from[0] !== to[0] || from[1] !== to[1])) {
+    const L = path.getTotalLength(), a = path.getPointAtLength(0), b = path.getPointAtLength(L);
+    const rev = Math.hypot(from[0] - b.x, from[1] - b.y) < Math.hypot(from[0] - a.x, from[1] - a.y);
+    return e => { const q = path.getPointAtLength((rev ? 1 - e : e) * L); return [q.x, q.y]; };
+  }
+  return e => [from[0] + (to[0] - from[0]) * e, from[1] + (to[1] - from[1]) * e];
+}
+const ease = x => (x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+
+/* ---------- sound (WebAudio) ---------- */
+let ac = null, master = null, soundOn = !reduce;
+function unlock() {
+  if (ac) { if (ac.state === "suspended") ac.resume(); return; }
+  try {
+    ac = new (window.AudioContext || window.webkitAudioContext)();
+    master = ac.createGain(); master.gain.value = 0.07; master.connect(ac.destination);
+  } catch (e) { ac = null; }
+}
+window.addEventListener("pointerdown", unlock);
+function osc(type, f0, f1, dur, delay = 0, vol = 1) {
+  const n = ac.currentTime + delay, o = ac.createOscillator(), g = ac.createGain();
+  o.type = type; o.frequency.setValueAtTime(f0, n);
+  if (f1) o.frequency.exponentialRampToValueAtTime(f1, n + dur);
+  g.gain.setValueAtTime(0.0001, n); g.gain.exponentialRampToValueAtTime(vol, n + 0.015);
+  g.gain.exponentialRampToValueAtTime(0.0001, n + dur);
+  o.connect(g); g.connect(master); o.start(n); o.stop(n + dur + 0.03);
+}
+function whoosh() {
+  const n = ac.currentTime, len = 0.32, buf = ac.createBuffer(1, ac.sampleRate * len, ac.sampleRate), d = buf.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  const src = ac.createBufferSource(); src.buffer = buf;
+  const f = ac.createBiquadFilter(); f.type = "bandpass"; f.Q.value = 1.2;
+  f.frequency.setValueAtTime(380, n); f.frequency.exponentialRampToValueAtTime(2400, n + len);
+  const g = ac.createGain(); g.gain.setValueAtTime(0.0001, n); g.gain.exponentialRampToValueAtTime(0.7, n + 0.06); g.gain.exponentialRampToValueAtTime(0.0001, n + len);
+  src.connect(f); f.connect(g); g.connect(master); src.start(n); src.stop(n + len);
+}
+function tone(kind) {
+  if (!soundOn || !ac || !kind || kind === "rest") return;
+  switch (kind) {
+    case "whoosh": whoosh(); break;
+    case "blip": osc("square", 880, null, 0.07, 0, 0.35); break;
+    case "soft": osc("triangle", 440, 520, 0.18, 0, 0.6); break;
+    case "chime": osc("sine", 660, null, 0.6, 0, 0.7); osc("sine", 990, null, 0.6, 0.05, 0.45); break;
+    case "resolve": [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => osc("sine", f, null, 0.55, i * 0.09, 0.6)); break;
+  }
+}
+
+/* ---------- state ---------- */
+let t = 0, last = null, playing = !reduce, speed = 0.5, cur = -1, arrived = new Set();
+let packets = [];
+
+function clearPackets() { packets.forEach(p => p.g.remove()); packets = []; }
+function resetVisual() {
+  nodes.forEach(n => { n.g.classList.remove("lit", "pulse"); n.rect.style.stroke = ""; });
+  svg.querySelectorAll(".wire").forEach(w => { w.classList.remove("live", "seen"); w.style.stroke = ""; });
+  toastEl.classList.remove("show"); clearPackets(); arrived.clear(); cur = -1;
+}
+function lightNode(n, c) { n.g.classList.add("lit"); n.rect.style.stroke = `var(--${c})`; }
+function arrive(i) {
+  if (arrived.has(i)) return; arrived.add(i);
+  const p = P[i]; p.targets.forEach(n => lightNode(n, p.c));
+  if (i === P.length - 1) toastEl.classList.add("show");
+}
+function setWire(id, c, live) {
+  const w = wireEl(id); if (!w) return;
+  if (live) { w.classList.add("live"); w.classList.remove("seen"); w.style.stroke = `var(--${c})`; }
+  else { w.classList.remove("live"); w.classList.add("seen"); w.style.stroke = ""; }
+}
+function enter(i, silent) {
+  for (let j = cur + 1; j < i; j++) { arrive(j); }       // catch up when jumping forward
+  if (cur >= 0) { const pc = P[cur]; [pc.wire, ...(pc.also || []).map(a => a.wire)].forEach(w => setWire(w, pc.c, false)); }
+  nodes.forEach(n => n.g.classList.remove("pulse"));
+  cur = i; const p = P[i];
+  numEl.textContent = String(p.step).padStart(2, "0");
+  capEl.innerHTML = p.txt;
+  segs.forEach((s, j) => { s.className = j < i ? "done" : j === i ? "on" : ""; });
+  clearPackets();
+  const lanes = [{ from: p.from, to: p.to, label: p.label, wire: p.wire }, ...(p.also || [])];
+  lanes.forEach(l => {
+    setWire(l.wire, p.c, true);
+    packets.push({ g: makePacket(l.label, p.c), track: trackFor(l.from, l.to, l.wire), still: l.from[0] === l.to[0] && l.from[1] === l.to[1] });
+  });
+  if (packets.every(k => k.still)) p.targets.forEach(n => { lightNode(n, p.c); n.g.classList.add("pulse"); });
+  if (!silent) tone(p.tone);
+}
+function phaseAt(time) { for (let i = 0; i < P.length; i++) if (time < starts[i] + P[i].d) return i; return P.length - 1; }
+
+function render(now) {
+  const i = phaseAt(t);
+  if (i < cur) resetVisual();
+  if (i !== cur) enter(i, !playing);
+  const p = P[i], prog = Math.min(1, (t - starts[i]) / p.d), travel = Math.min(1, prog / 0.72), e = ease(travel);
+  packets.forEach(k => {
+    const [x, y] = k.track(e);
+    const bob = k.still && !reduce ? Math.sin(now / 260) * 3 : 0;
+    k.g.setAttribute("transform", `translate(${x.toFixed(1)},${(y + bob).toFixed(1)})`);
+    k.g.style.opacity = k.still ? 1 : (prog > 0.9 ? Math.max(0, 1 - (prog - 0.9) * 10) : 1);
+  });
+  if (travel >= 1) arrive(i);
+  if (!reduce) nodes.forEach(n => { if (n.drift) n.g.setAttribute("transform", `translate(0,${(Math.sin(now / 1400 + n.seed) * 2.6).toFixed(2)})`); });
+}
+function frame(now) {
+  if (last == null) last = now;
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  if (playing) { t += dt * speed; if (t >= total) { t = 0; resetVisual(); } }
+  render(now);
+  requestAnimationFrame(frame);
+}
+
+/* ---------- controls ---------- */
+const bPlay = document.getElementById("bPlay"), bSound = document.getElementById("bSound");
+function syncPlay() { bPlay.textContent = playing ? "Pause" : "Play"; bPlay.setAttribute("aria-pressed", String(!playing)); }
+function syncSound() { bSound.textContent = soundOn ? "Sound On" : "Sound Off"; bSound.setAttribute("aria-pressed", String(soundOn)); }
+function togglePlay() { playing = !playing; syncPlay(); }
+function replay() { resetVisual(); t = 0; playing = true; syncPlay(); }
+function jumpTo(i, freeze, frac = 0.45) {   // frac 0.45 → packet frozen mid-flight, pill visible
+  i = Math.max(0, Math.min(P.length - 1, i));
+  resetVisual(); t = starts[i] + P[i].d * frac;
+  if (freeze) { playing = false; syncPlay(); }
+  render(performance.now()); arrive(i);
+}
+bPlay.addEventListener("click", togglePlay);
+document.getElementById("bReplay").addEventListener("click", replay);
+bSound.addEventListener("click", () => { unlock(); soundOn = !soundOn; syncSound(); });
+document.querySelectorAll(".spd").forEach(b => b.addEventListener("click", () => {
+  speed = +b.dataset.s; document.querySelectorAll(".spd").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+}));
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "BUTTON" && (e.key === " " || e.key === "Enter")) return;
+  if (e.key === " ") { e.preventDefault(); togglePlay(); }
+  else if (e.key === "r" || e.key === "R") replay();
+  else if (e.key === "ArrowRight") jumpTo(cur + 1, true);
+  else if (e.key === "ArrowLeft") jumpTo(cur - 1, true);
+});
+
+/* ---------- boot ---------- */
+syncSound();
+document.querySelectorAll(".spd").forEach(x => x.setAttribute("aria-pressed", String(+x.dataset.s === speed)));   // default speed from spec
+const at = new URLSearchParams(location.search).get("at");
+const atIdx = at ? P.findIndex(p => p.k === at) : -1;
+if (atIdx >= 0) jumpTo(atIdx, true);
+else if (reduce) jumpTo(P.length - 1, true, 0.999);
+syncPlay();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

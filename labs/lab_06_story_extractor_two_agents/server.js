@@ -2,6 +2,7 @@ import "dotenv/config";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import axios from "axios";
+import cors from "cors";
 import express from "express";
 import {
   runStoryTeller,
@@ -12,18 +13,23 @@ import { runExtractorAgent, ExtractorError } from "./extractorAgent.js";
 
 const COUNTRIES_API_URL =
   "https://restcountries.com/v3.1/all?fields=name,capital,currencies";
-import cors from "cors";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-
 
 const app = express();
 const port = Number(process.env.PORT) || 3000;
 
-app.use(cors()); 
-
+app.use(
+  cors({
+    origin: true,
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type"],
+  }),
+);
 app.use(express.json({ limit: "32kb" }));
+
+// Serve index.html and other static assets from this lab folder.
+// Open http://localhost:PORT/ instead of opening the HTML via file://
 app.use(express.static(__dirname));
 
 app.get("/healthcheck", (_req, res) => {
@@ -43,7 +49,7 @@ app.get("/countries", async (_req, res) => {
 });
 
 app.post("/api/story", async (req, res) => {
-  console.log("request started")
+  console.log("request started");
   const apiKey = process.env.OPENROUTER_API_KEY?.trim();
   if (!apiKey) {
     throw new Error("Missing API KEY - OPENROUTER_API_KEY");
@@ -118,8 +124,6 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ error: "Somethng went wrong" });
 });
 
-
-
 export { app };
 
 const isMainModule =
@@ -130,10 +134,9 @@ const isMainModule =
 if (isMainModule) {
   app.listen(port, () => {
     console.log(`Story teller API listening on http://localhost:${port}`);
-    console.log(`GET /countries — proxy restcountries.com`); // remove this one 
+    console.log(`GET / — story teller UI (index.html)`);
+    console.log(`GET /countries — proxy restcountries.com`);
     console.log(`POST /api/story — launch the kids story agent`);
     console.log(`POST /api/story/chat — free-text chat → extractor → story agent`);
-    console.log(`GET / — story teller UI (index.html)`);
   });
 }
-
