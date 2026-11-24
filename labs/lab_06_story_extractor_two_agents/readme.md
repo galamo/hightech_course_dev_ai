@@ -1,5 +1,7 @@
 # Lab 06 — Story Extractor: Two-Agent Pipeline
 
+> ▶ **Animated flow:** [L06-story-extractor-two-agents.html](../../demo/Flows/L06-story-extractor-two-agents.html) — open in a browser to watch this lab's request flow step by step.
+
 LangChain agent that writes short kids stories (happy or scary) using OpenRouter.
 
 ## Setup

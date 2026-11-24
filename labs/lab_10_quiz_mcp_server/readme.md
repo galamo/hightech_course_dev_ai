@@ -1,5 +1,7 @@
 # Lab 10 — Quiz MCP Server
 
+> ▶ **Animated flow:** [L10-quiz-mcp-server.html](../../demo/Flows/L10-quiz-mcp-server.html) — open in a browser to watch this lab's request flow step by step.
+
 A first Model Context Protocol server: a quiz exposed over **Streamable HTTP** (stateless), with tools and a prompt. The quiz data lives in `mcp-server/data/questions.json`, and the logic is in `mcp-server/lib/quiz-store.js`.
 
 ## Setup and run

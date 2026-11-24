@@ -1,5 +1,7 @@
 # Lab 15 — RAG Image Search
 
+> ▶ **Animated flow:** [L15-rag-image-search-reranker.html](../../demo/Flows/L15-rag-image-search-reranker.html) — open in a browser to watch this lab's request flow step by step.
+
 Visual RAG system: upload an image, index it with a LangChain vision agent, store embeddings in PostgreSQL + PGVector, then search by keywords with vector retrieval and an LLM reranker.
 
 ## Stack

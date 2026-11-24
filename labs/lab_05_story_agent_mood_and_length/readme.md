@@ -1,5 +1,7 @@
 # Lab 05 — Story Agent: Mood, Length and Title
 
+> ▶ **Animated flow:** [L05-story-mood-and-length.html](../../demo/Flows/L05-story-mood-and-length.html) — open in a browser to watch this lab's request flow step by step.
+
 LangChain agent that writes short kids stories (happy or scary) using OpenRouter.
 
 ## Setup

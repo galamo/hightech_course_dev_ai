@@ -1,5 +1,7 @@
 # Lab 14 — Image Text Extraction & Search
 
+> ▶ **Animated flow:** [L14-image-text-search-pgvector.html](../../demo/Flows/L14-image-text-search-pgvector.html) — open in a browser to watch this lab's request flow step by step.
+
 Upload images, extract text/tags/descriptions with an OpenRouter vision model, index them in PostgreSQL + pgvector, and search by keywords or subjects.
 
 ## Architecture

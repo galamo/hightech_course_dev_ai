@@ -1,5 +1,7 @@
 # Lab 07 — Travel Planner Agent: Tools and Map
 
+> ▶ **Animated flow:** [L07-travel-map-agent-tools.html](../../demo/Flows/L07-travel-map-agent-tools.html) — open in a browser to watch this lab's request flow step by step.
+
 A LangChain flight-planner agent (TypeScript) with several tools. The React client shows the departure and destination on a Leaflet map, with country flags.
 
 ## Tools

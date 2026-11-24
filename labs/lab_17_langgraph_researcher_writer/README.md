@@ -1,5 +1,7 @@
 # Lab 17 — LangGraph – Agent-to-Agent Communication
 
+> ▶ **Animated flow:** [L17-langgraph-researcher-writer.html](../../demo/Flows/L17-langgraph-researcher-writer.html) — open in a browser to watch this lab's request flow step by step.
+
 This lab shows **two agents communicating via LangGraph**: a **Researcher** agent and a **Writer** agent. They share state in a single graph; the Researcher writes `researchNotes`, and the Writer reads them and produces `finalAnswer`.
 
 ## Flow

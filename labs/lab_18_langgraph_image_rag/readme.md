@@ -1,5 +1,7 @@
 # Lab 18 — RAG Image Search with LangGraph
 
+> ▶ **Animated flow:** [L18-langgraph-image-rag.html](../../demo/Flows/L18-langgraph-image-rag.html) — open in a browser to watch this lab's request flow step by step.
+
 Visual RAG system like Lab 15, but upload and search pipelines are orchestrated with **LangGraph** `StateGraph` flows. Vision indexing and reranking still use LangChain `createAgent` with OpenRouter models.
 
 ## Stack

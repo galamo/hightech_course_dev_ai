@@ -1,5 +1,7 @@
 # Lab 11 — Full-Stack Products Store + AI Agent via MCP
 
+> ▶ **Animated flow:** [L11-products-store-mcp-agent.html](../../demo/Flows/L11-products-store-mcp-agent.html) — open in a browser to watch this lab's request flow step by step.
+
 ## Architecture
 
 ```

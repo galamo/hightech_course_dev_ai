@@ -1,5 +1,7 @@
 # Lab 16 — Multi-Agent — Router with Agents as Tools
 
+> ▶ **Animated flow:** [L16-multi-agent-router-sql-rag.html](../../demo/Flows/L16-multi-agent-router-sql-rag.html) — open in a browser to watch this lab's request flow step by step.
+
 The **router uses each agent as a tool**. The LLM chooses which tool to call (HTML RAG, SQL agent, or Mermaid diagram agent) instead of returning a route string that the server dispatches with `if/else`.
 
 1. **Router agent** – Chat model with three tools:

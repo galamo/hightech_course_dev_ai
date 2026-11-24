@@ -1,5 +1,7 @@
 # Lab 08 — Image Vision Agent
 
+> ▶ **Animated flow:** [L08-image-vision-agent.html](../../demo/Flows/L08-image-vision-agent.html) — open in a browser to watch this lab's request flow step by step.
+
 Express + LangChain OpenRouter vision lab: upload one PNG/JPEG (≤1MB), save and serve it statically, and return structured `{ tags, description }` from a vision model. Dark native HTML/CSS/JS client shows tags immediately and reveals the description via **Explain**.
 
 ## Setup

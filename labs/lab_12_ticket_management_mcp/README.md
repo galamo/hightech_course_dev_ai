@@ -1,5 +1,7 @@
 # Lab 12 — Ticket Management (UI + Backend + MCP)
 
+> ▶ **Animated flow:** [L12-ticket-management-mcp.html](../../demo/Flows/L12-ticket-management-mcp.html) — open in a browser to watch this lab's request flow step by step.
+
 ```
 ui/          Vanilla HTML/JS/CSS ticket board (served by the backend)
 backend/     Node.js + Express REST API, data saved to backend/data/db.json

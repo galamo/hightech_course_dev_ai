@@ -1,5 +1,7 @@
 # Lab 13 — Ticket Agent (Chatbot + LangChain + MCP)
 
+> ▶ **Animated flow:** [L13-ticket-agent-mcp-client.html](../../demo/Flows/L13-ticket-agent-mcp-client.html) — open in a browser to watch this lab's request flow step by step.
+
 ```
 Browser chat UI ──REST──▶ Express :5000 ──▶ LangChain createAgent (OpenRouter model)
      │ login                         │ Bearer JWT on tools/chat

@@ -1,5 +1,7 @@
 # Lab 09 — RAG + Construction Pricing Agent
 
+> ▶ **Animated flow:** [L09-rag-construction-pricing.html](../../demo/Flows/L09-rag-construction-pricing.html) — open in a browser to watch this lab's request flow step by step.
+
 Node.js + LangChain pipeline that:
 
 1. **Loads a constructor pricing file (TXT) into memory** via an in-memory RAG pipeline (vector store + embeddings).
