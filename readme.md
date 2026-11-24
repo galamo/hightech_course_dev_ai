@@ -1,29 +1,24 @@
 # HightechCourse_Dev_AI
 
-
-| Resource | Details |
-| --- | --- |
-| **AI provider** | [Get OpenRouter key](https://galamo.app.n8n.cloud/form/get-openrouter-key) |
-| **Course ID** | `2ba999b9-eec4-414f-83aa-31d3321f2fc0` |
-| **Machines provider** | [AWS Labs login](https://awslabs.devopshift.academy/login) |
-| **Machine GUID** | `bb9779cc-44c4-4fb1-b483-39c72faebd13` |
-
-
+| Resource                     | Details                                                                    |
+| ---------------------------- | -------------------------------------------------------------------------- |
+| **AI provider - Openrouter** | [Get OpenRouter key](https://galamo.app.n8n.cloud/form/get-openrouter-key) |
+| **Course ID**                | `2ba999b9-eec4-414f-83aa-31d3321f2fc0`                                     |
+| **Machines provider**        | [AWS Labs login](https://awslabs.devopshift.academy/login)                 |
+| **Machine GUID**             | `bb9779cc-44c4-4fb1-b483-39c72faebd13`                                     |
 
 ## Access
 
-| Resource | Details |
-| --- | --- |
-| **AI provider** | [Get OpenRouter key](https://galamo.app.n8n.cloud/form/get-openrouter-key) |
-| **Course ID** | `2ba999b9-eec4-414f-83aa-31d3321f2fc0` |
-| **Machines provider** | [AWS Labs login](https://awslabs.devopshift.academy/login) |
-| **Machine GUID** | `bb9779cc-44c4-4fb1-b483-39c72faebd13` |
-
+| Resource              | Details                                                                    |
+| --------------------- | -------------------------------------------------------------------------- |
+| **AI provider**       | [Get OpenRouter key](https://galamo.app.n8n.cloud/form/get-openrouter-key) |
+| **Course ID**         | `2ba999b9-eec4-414f-83aa-31d3321f2fc0`                                     |
+| **Machines provider** | [AWS Labs login](https://awslabs.devopshift.academy/login)                 |
+| **Machine GUID**      | `bb9779cc-44c4-4fb1-b483-39c72faebd13`                                     |
 
 ### Gal Amouyal
 
 galamouyal88@gmail.com
-
 
 This repository is the course workspace for **Agentic AI Development**: a playground for experimenting with agentic AI patterns and tools, using Cursor as the primary development environment.
 
@@ -34,7 +29,6 @@ This repository is the course workspace for **Agentic AI Development**: a playgr
 - [Model Context Protocol](https://model-context-protocol-dz2jt4d.gamma.site/)
 - [LangChain agents (JavaScript)](https://docs.langchain.com/oss/javascript/langchain/agents)
 - [LangChain overview (JavaScript)](https://docs.langchain.com/oss/javascript/langchain/overview)
-
 
 ## Course files
 
@@ -105,49 +99,49 @@ git --version
 
 The labs are numbered in teaching order. Each lab builds on ideas from the earlier ones.
 
-| # | Lab | Topic | Stack | Env file(s) |
-| --- | --- | --- | --- | --- |
-| 01 | [`lab_01_figma_wireframe_prompt`](labs/lab_01_figma_wireframe_prompt) | Static Figma wireframe turned into HTML; prompting basics, no AI | HTML / CSS | — |
-| 02 | [`lab_02_agent_chat_ui_shell`](labs/lab_02_agent_chat_ui_shell) | Offline agent chat UI shell (no backend) | React, Vite, MUI | — |
-| 03 | [`lab_03_kids_story_agent_cli`](labs/lab_03_kids_story_agent_cli) | First LangChain agent: prompt + model, no tools | Node.js, LangChain, OpenRouter | `.env` |
-| 04 | [`lab_04_story_agent_api_react_docker`](labs/lab_04_story_agent_api_react_docker) | Tools and a sub-agent (image, translation), HTTP API, React client, Docker Compose | Node.js, Express, React, Docker | `.env` |
-| 05 | [`lab_05_story_agent_mood_and_length`](labs/lab_05_story_agent_mood_and_length) | Parameterized prompts: title, mood, length, creativity | Node.js, Express | `.env` |
-| 06 | [`lab_06_story_extractor_two_agents`](labs/lab_06_story_extractor_two_agents) | Two-agent pipeline: extractor → story agent | Node.js, Express | `.env` |
-| 07 | [`lab_07_travel_map_agent_tools`](labs/lab_07_travel_map_agent_tools) | Travel planner agent with tools: flights, geocoding, flags, currency, map | TypeScript, LangChain, Tavily, React, Leaflet | `.env` |
-| 08 | [`lab_08_image_vision_agent`](labs/lab_08_image_vision_agent) | Vision agent: image upload → tags and description | Node.js, Express, OpenRouter vision | `.env` |
-| 09 | [`lab_09_rag_construction_pricing`](labs/lab_09_rag_construction_pricing) | In-memory RAG over a pricing file + image pricing agent | Node.js, LangChain, MemoryVectorStore | `.env` |
-| 10 | [`lab_10_quiz_mcp_server`](labs/lab_10_quiz_mcp_server) | First MCP server: quiz tools and prompts | MCP SDK, Streamable HTTP | `mcp-server/.env` |
-| 11 | [`lab_11_products_store_mcp_agent`](labs/lab_11_products_store_mcp_agent) | Same logic as a REST API and an MCP tool; agent uses MCP | React, Express, MCP | `server/.env`, `mcp-server/.env` |
-| 12 | [`lab_12_ticket_management_mcp`](labs/lab_12_ticket_management_mcp) | Ticket board: backend + MCP server with JWT auth and roles | Express, MCP | `backend/.env`, `mcp-server/.env` |
-| 13 | [`lab_13_ticket_agent_mcp_client`](labs/lab_13_ticket_agent_mcp_client) | Chatbot agent that discovers tools from the lab 12 MCP server | LangChain, MCP client | `.env` |
-| 14 | [`lab_14_image_text_search_pgvector`](labs/lab_14_image_text_search_pgvector) | Image text extraction + vector search | PostgreSQL + pgvector, Docker | `server/.env` |
-| 15 | [`lab_15_rag_image_search_reranker`](labs/lab_15_rag_image_search_reranker) | Visual RAG with vector retrieval and an LLM reranker | TypeScript, React, pgvector | `server/.env` |
-| 16 | [`lab_16_multi_agent_router_sql_rag`](labs/lab_16_multi_agent_router_sql_rag) | Multi-agent router: HTML RAG, SQL agent, Mermaid MCP agent as tools | Express, pgvector, MCP | `server/.env` |
-| 17 | [`lab_17_langgraph_researcher_writer`](labs/lab_17_langgraph_researcher_writer) | LangGraph: two agents share state (researcher → writer) | LangGraph | `.env` |
-| 18 | [`lab_18_langgraph_image_rag`](labs/lab_18_langgraph_image_rag) | Lab 15 rebuilt as LangGraph indexing and search graphs | LangGraph, TypeScript, pgvector | `server/.env` |
+| #   | Lab                                                                               | Topic                                                                              | Stack                                         | Env file(s)                       |
+| --- | --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | --------------------------------------------- | --------------------------------- |
+| 01  | [`lab_01_figma_wireframe_prompt`](labs/lab_01_figma_wireframe_prompt)             | Static Figma wireframe turned into HTML; prompting basics, no AI                   | HTML / CSS                                    | —                                 |
+| 02  | [`lab_02_agent_chat_ui_shell`](labs/lab_02_agent_chat_ui_shell)                   | Offline agent chat UI shell (no backend)                                           | React, Vite, MUI                              | —                                 |
+| 03  | [`lab_03_kids_story_agent_cli`](labs/lab_03_kids_story_agent_cli)                 | First LangChain agent: prompt + model, no tools                                    | Node.js, LangChain, OpenRouter                | `.env`                            |
+| 04  | [`lab_04_story_agent_api_react_docker`](labs/lab_04_story_agent_api_react_docker) | Tools and a sub-agent (image, translation), HTTP API, React client, Docker Compose | Node.js, Express, React, Docker               | `.env`                            |
+| 05  | [`lab_05_story_agent_mood_and_length`](labs/lab_05_story_agent_mood_and_length)   | Parameterized prompts: title, mood, length, creativity                             | Node.js, Express                              | `.env`                            |
+| 06  | [`lab_06_story_extractor_two_agents`](labs/lab_06_story_extractor_two_agents)     | Two-agent pipeline: extractor → story agent                                        | Node.js, Express                              | `.env`                            |
+| 07  | [`lab_07_travel_map_agent_tools`](labs/lab_07_travel_map_agent_tools)             | Travel planner agent with tools: flights, geocoding, flags, currency, map          | TypeScript, LangChain, Tavily, React, Leaflet | `.env`                            |
+| 08  | [`lab_08_image_vision_agent`](labs/lab_08_image_vision_agent)                     | Vision agent: image upload → tags and description                                  | Node.js, Express, OpenRouter vision           | `.env`                            |
+| 09  | [`lab_09_rag_construction_pricing`](labs/lab_09_rag_construction_pricing)         | In-memory RAG over a pricing file + image pricing agent                            | Node.js, LangChain, MemoryVectorStore         | `.env`                            |
+| 10  | [`lab_10_quiz_mcp_server`](labs/lab_10_quiz_mcp_server)                           | First MCP server: quiz tools and prompts                                           | MCP SDK, Streamable HTTP                      | `mcp-server/.env`                 |
+| 11  | [`lab_11_products_store_mcp_agent`](labs/lab_11_products_store_mcp_agent)         | Same logic as a REST API and an MCP tool; agent uses MCP                           | React, Express, MCP                           | `server/.env`, `mcp-server/.env`  |
+| 12  | [`lab_12_ticket_management_mcp`](labs/lab_12_ticket_management_mcp)               | Ticket board: backend + MCP server with JWT auth and roles                         | Express, MCP                                  | `backend/.env`, `mcp-server/.env` |
+| 13  | [`lab_13_ticket_agent_mcp_client`](labs/lab_13_ticket_agent_mcp_client)           | Chatbot agent that discovers tools from the lab 12 MCP server                      | LangChain, MCP client                         | `.env`                            |
+| 14  | [`lab_14_image_text_search_pgvector`](labs/lab_14_image_text_search_pgvector)     | Image text extraction + vector search                                              | PostgreSQL + pgvector, Docker                 | `server/.env`                     |
+| 15  | [`lab_15_rag_image_search_reranker`](labs/lab_15_rag_image_search_reranker)       | Visual RAG with vector retrieval and an LLM reranker                               | TypeScript, React, pgvector                   | `server/.env`                     |
+| 16  | [`lab_16_multi_agent_router_sql_rag`](labs/lab_16_multi_agent_router_sql_rag)     | Multi-agent router: HTML RAG, SQL agent, Mermaid MCP agent as tools                | Express, pgvector, MCP                        | `server/.env`                     |
+| 17  | [`lab_17_langgraph_researcher_writer`](labs/lab_17_langgraph_researcher_writer)   | LangGraph: two agents share state (researcher → writer)                            | LangGraph                                     | `.env`                            |
+| 18  | [`lab_18_langgraph_image_rag`](labs/lab_18_langgraph_image_rag)                   | Lab 15 rebuilt as LangGraph indexing and search graphs                             | LangGraph, TypeScript, pgvector               | `server/.env`                     |
 
 ### Quick start per lab
 
-| # | Commands (from the lab folder) | URL |
-| --- | --- | --- |
-| 01 | Open `index.html` in a browser | — |
-| 02 | `npm install && npm run dev` | http://localhost:5173 |
-| 03 | `npm install && npm run agent -- "a friendly dragon"` | CLI |
-| 04 | `docker compose up --build`, or `npm run dev` + `cd client && npm run dev` | http://localhost:3000 (Docker), http://localhost:5173 (local) |
-| 05 | `npm install && npm run agent -- --mood scary --lines 8 "an old house"`, or `npm run server` | http://localhost:3000 |
-| 06 | `npm install && npm run server` | http://localhost:3000 |
-| 07 | `npm install && npm install --prefix client && npm run dev` | http://localhost:5173 (API on 3001) |
-| 08 | `npm install && npm run dev` | http://localhost:3000 |
-| 09 | `npm install && node scripts/run-pricing-qa.js` | CLI |
-| 10 | `cd mcp-server && npm install && npm start` | http://localhost:3200/mcp |
-| 11 | `mcp-server`: `npm start`; `server`: `npm start`; `client`: `npm run dev` | http://localhost:5111 |
-| 12 | `backend`: `npm start`; `mcp-server`: `npm start` | http://localhost:4000 |
-| 13 | Start lab 12 first, then `npm install && npm start` | http://localhost:5000 |
-| 14 | `docker compose up -d`; `server`: `npm run init-db && npm start`; `client`: `npm run dev` | API on 3003 |
-| 15 | `docker compose up -d`; then `server` and `client` (see the lab readme) | http://localhost:5173 (API on 3001) |
-| 16 | `docker compose up -d`; `server`: `npm run init-db && npm run index-schema && npm run index-html && npm start` | http://localhost:3002 |
-| 17 | `npm install && npm start` | CLI |
-| 18 | `docker compose up -d`; then `server` and `client` (see the lab readme) | API on 3002, UI on 5174 |
+| #   | Commands (from the lab folder)                                                                                 | URL                                                           |
+| --- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| 01  | Open `index.html` in a browser                                                                                 | —                                                             |
+| 02  | `npm install && npm run dev`                                                                                   | http://localhost:5173                                         |
+| 03  | `npm install && npm run agent -- "a friendly dragon"`                                                          | CLI                                                           |
+| 04  | `docker compose up --build`, or `npm run dev` + `cd client && npm run dev`                                     | http://localhost:3000 (Docker), http://localhost:5173 (local) |
+| 05  | `npm install && npm run agent -- --mood scary --lines 8 "an old house"`, or `npm run server`                   | http://localhost:3000                                         |
+| 06  | `npm install && npm run server`                                                                                | http://localhost:3000                                         |
+| 07  | `npm install && npm install --prefix client && npm run dev`                                                    | http://localhost:5173 (API on 3001)                           |
+| 08  | `npm install && npm run dev`                                                                                   | http://localhost:3000                                         |
+| 09  | `npm install && node scripts/run-pricing-qa.js`                                                                | CLI                                                           |
+| 10  | `cd mcp-server && npm install && npm start`                                                                    | http://localhost:3200/mcp                                     |
+| 11  | `mcp-server`: `npm start`; `server`: `npm start`; `client`: `npm run dev`                                      | http://localhost:5111                                         |
+| 12  | `backend`: `npm start`; `mcp-server`: `npm start`                                                              | http://localhost:4000                                         |
+| 13  | Start lab 12 first, then `npm install && npm start`                                                            | http://localhost:5000                                         |
+| 14  | `docker compose up -d`; `server`: `npm run init-db && npm start`; `client`: `npm run dev`                      | API on 3003                                                   |
+| 15  | `docker compose up -d`; then `server` and `client` (see the lab readme)                                        | http://localhost:5173 (API on 3001)                           |
+| 16  | `docker compose up -d`; `server`: `npm run init-db && npm run index-schema && npm run index-html && npm start` | http://localhost:3002                                         |
+| 17  | `npm install && npm start`                                                                                     | CLI                                                           |
+| 18  | `docker compose up -d`; then `server` and `client` (see the lab readme)                                        | API on 3002, UI on 5174                                       |
 
 Labs 14, 15, 16, and 18 each start PostgreSQL on port 5432. Run only one database stack at a time. Labs 16 and 18 both use API port 3002, so run them one at a time too.
 
