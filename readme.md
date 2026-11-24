@@ -1,6 +1,15 @@
 # HightechCourse_Dev_AI
 
 
+## Access
+
+| Resource | Details |
+| --- | --- |
+| **AI provider** | [Get OpenRouter key](https://galamo.app.n8n.cloud/form/get-openrouter-key) |
+| **Course ID** | `2ba999b9-eec4-414f-83aa-31d3321f2fc0` |
+| **Machines provider** | [AWS Labs login](https://awslabs.devopshift.academy/login) |
+| **Machine GUID** | `bb9779cc-44c4-4fb1-b483-39c72faebd13` |
+
 
 ### Gal Amouyal
 
