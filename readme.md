@@ -3,7 +3,7 @@
 ## Zoom
 
 https://docs.google.com/document/d/1yQVbY05LtNrI0lK9rN_PInwqfkNrAh2cJIRj_XslMu4/edit?usp=sharing
-
+## Access
 | Resource                     | Details                                                                    |
 | ---------------------------- | -------------------------------------------------------------------------- |
 | **AI provider - Openrouter** | [Get OpenRouter key](https://galamo.app.n8n.cloud/form/get-openrouter-key) |
@@ -11,14 +11,7 @@ https://docs.google.com/document/d/1yQVbY05LtNrI0lK9rN_PInwqfkNrAh2cJIRj_XslMu4/
 | **Machines provider**        | [AWS Labs login](https://awslabs.devopshift.academy/login)                 |
 | **Machine GUID**             | `fff177fb-8102-4b1a-b0c5-40da02ecf95e`                                     |
 
-## Access
-
-| Resource              | Details                                                                    |
-| --------------------- | -------------------------------------------------------------------------- |
-| **AI provider**       | [Get OpenRouter key](https://galamo.app.n8n.cloud/form/get-openrouter-key) |
-| **Course ID**         | `2ba999b9-eec4-414f-83aa-31d3321f2fc0`                                     |
-| **Machines provider** | [AWS Labs login](https://awslabs.devopshift.academy/login)                 |
-| **Machine GUID**      | `bb9779cc-44c4-4fb1-b483-39c72faebd13`                                     |
+                                  |
 
 ### Gal Amouyal
 
