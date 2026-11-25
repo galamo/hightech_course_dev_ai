@@ -7,29 +7,20 @@
 import "dotenv/config";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
-import { ChatOpenAI } from "@langchain/openai";
 import { AgentExecutor, createToolCallingAgent } from "langchain/agents";
 import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
 import { DynamicStructuredTool } from "@langchain/core/tools";
 import { z } from "zod";
+import { createChatModel } from "../lib/llm.js";
 
 const MCP_MERMAID_URL = process.env.MCP_MERMAID_URL || "https://mcp.mermaid.ai/mcp";
 const MCP_MERMAID_AUTH = process.env.MCP_MERMAID_AUTH || "";
 
 function createModel() {
-  const openRouterKey = process.env.OPENROUTER_API_KEY;
-  const openaiKey = process.env.OPENAI_API_KEY;
-  if (openRouterKey) {
-    return new ChatOpenAI({
-      model: "openai/gpt-4o-mini",
-      temperature: 0,
-      configuration: { baseURL: "https://openrouter.ai/api/v1", apiKey: openRouterKey },
-    });
-  }
-  if (openaiKey) {
-    return new ChatOpenAI({ model: "gpt-4o-mini", temperature: 0 });
-  }
-  throw new Error("Set OPENAI_API_KEY or OPENROUTER_API_KEY in .env");
+  return createChatModel({
+    model: process.env.TESTING_MODEL || "openai/gpt-4o-mini",
+    temperature: 0,
+  });
 }
 
 /**

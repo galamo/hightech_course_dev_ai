@@ -51,3 +51,33 @@ The JWT from `POST /auth` is stored in the browser and sent on every agent API c
 | POST | `/api/chat` | Bearer JWT | `{ messages: [{role, content}] }` → `{ reply, toolCalls }` |
 | GET | `/api/tools` | Bearer JWT | tools currently loaded from MCP |
 | POST | `/api/tools/reload` | Bearer JWT | reconnect to MCP and reload tools |
+
+---
+
+## Exercises
+
+### 🟢 Easy — Talk to your tickets
+
+1. Run Lab 12 (backend + MCP) and this agent. Sign in as `galamo` and then as `romanb`.
+2. Ask *"What tickets are assigned to me?"* and *"Create a ticket for updating the docs"*. Look at the **tools used** panel for each answer.
+3. Edit the agent's system prompt in `agent.js` so the agent:
+   - Always answers with a short bullet list.
+   - Asks for the project name if the user didn't give one when creating a ticket.
+4. Switch `OPENROUTER_MODEL` to a cheaper or smaller model and compare how well it picks tools.
+
+**Done when:** you can explain, from the tools panel, which MCP tools each question triggered.
+
+### 🟡 Medium — Human-in-the-loop for dangerous actions
+
+1. Treat `delete_ticket` and `close_ticket` as **dangerous** tools.
+2. When the agent wants to call one, don't run it right away. Return a `pendingAction` (`{ tool, args, summary }`) to the UI instead.
+3. The UI shows a **Confirm / Cancel** card. Only *Confirm* actually runs the MCP tool and sends the result back to the agent.
+4. Bonus: add a "My daily standup" button that asks the agent to summarize the user's tickets grouped by status.
+
+**Done when:** *"Delete all my done tickets"* shows a confirmation first, and nothing is deleted on Cancel.
+
+### 🔴 Hard — HR self-service assistant
+
+Recreate "chatbot → login → JWT → MCP tool discovery" for an **HR system**.
+An employee signs in and asks *"How many vacation days do I have left?"* or *"Request leave from 3–5 March"*. A manager signs in and can approve requests.
+The tools the agent discovers, and what they're allowed to do, depend on the user's role in the JWT.

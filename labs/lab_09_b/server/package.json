@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
+    "init-db": "node scripts/load-schema.js && node scripts/load-data.js",
     "index-schema": "node scripts/index-schema.js",
     "index-html": "node scripts/index-html.js",
     "load-schema": "node scripts/load-schema.js",
-    "load-data": "node scripts/load-data.js",
-    "init-db": "node scripts/load-schema.js && node scripts/load-data.js"
+    "load-data": "node scripts/load-data.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.26.0",

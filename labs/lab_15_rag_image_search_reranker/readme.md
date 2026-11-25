@@ -150,3 +150,30 @@ flowchart LR
 - Embeddings use OpenRouter’s OpenAI-compatible `/embeddings` endpoint via `OpenAIEmbeddings` and a provider abstraction (`EmbeddingService`).
 - The IVFFlat index is created at migration time; if it fails on an empty database, insert one image first, then create the index manually.
 - API keys stay on the server only; the React app talks to `/api` through the Vite dev proxy.
+
+---
+
+## Exercises
+
+### 🟢 Easy — See what the reranker adds
+
+1. Run the lab and upload about 10 images, some of them similar on purpose (3 different cars, 2 beaches).
+2. Search for `red car` and `sunset on the beach`. For each result card, compare the **vector similarity** with the **reranker score**. When do they disagree?
+3. Edit the reranker prompt in `server/src/services/reranker-agent.service.ts` to be stricter: drop results with a score below 5, and keep the explanation to one short sentence.
+4. Change how many candidates go into the reranker (for example 10 → 4) and note the effect on quality and speed.
+
+**Done when:** you can show one query where the reranker fixed the vector ranking.
+
+### 🟡 Medium — Search by image ("more like this")
+
+1. Add an endpoint, `POST /api/images/search-by-image`, that accepts an uploaded image.
+2. Reuse the vision indexing agent to describe the query image, embed that text, and run the usual vector search, then the reranker.
+3. Add a **"Find similar"** button on each result card that runs the search using that card's image.
+4. Exclude the query image itself from the results.
+
+**Done when:** clicking "Find similar" on a beach photo returns the other beach photos first.
+
+### 🔴 Hard — Insurance claims photo search
+
+Recreate "visual RAG + reranker" for a **car-insurance claims** team.
+Adjusters upload damage photos, which are indexed with damage type, car part and severity. When a new claim comes in, they search *"cracked windshield, front, minor"* to find similar past claims. The reranker explains why each past claim is a close match, to help estimate the payout.

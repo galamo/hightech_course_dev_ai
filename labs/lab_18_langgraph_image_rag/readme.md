@@ -176,3 +176,30 @@ flowchart LR
 - Agents use `createAgent` + `ChatOpenRouter` per course standards.
 - Graph nodes call agents and infrastructure services; state is passed through LangGraph annotations.
 - API keys stay on the server; the React app proxies `/api` and `/uploads` via Vite.
+
+---
+
+## Exercises
+
+### 🟢 Easy — Look inside the graphs
+
+1. Run the lab, upload a few images, search, and open `GET /api/graph` to see both graphs.
+2. Add timing logs to each node in `server/src/graph/search-graph.ts` and `indexing-graph.ts` (node name + ms). Which node is the slowest?
+3. Change the number of retrieved candidates and the reranker model through `.env`, then compare the results.
+4. Make the `storeDocument` node write an `error` field to the state, instead of throwing, when the DB insert fails.
+
+**Done when:** each upload and search prints a per-node timing line, and a DB failure returns a clean error.
+
+### 🟡 Medium — Corrective search with a conditional edge
+
+1. After `retrieveCandidates`, add a **conditional edge**. If the best similarity is below a threshold, go to a new node, `rewriteQuery`.
+2. `rewriteQuery` uses the LLM to expand the query with synonyms and related terms (for example "auto" → "car, vehicle, sedan"), then goes back to `embedQuery`. Allow at most 1 retry.
+3. Keep `originalQuery` and `rewrittenQuery` in the state, and show the rewritten query in the UI when it was used.
+4. Bonus: add a `checkDuplicate` node in the indexing graph that skips images that are almost identical to ones already stored.
+
+**Done when:** a vague query that used to return nothing now returns results through the rewrite path.
+
+### 🔴 Hard — Lost & Found matcher
+
+Recreate the LangGraph indexing and search flows for a **lost & found office** (an airport, or a public transport company).
+Staff upload photos of found items, which are indexed by type, color, brand and marks. A passenger describes a lost item in free text, and the search graph retrieves, reranks and returns the best matches with a confidence level. If nothing matches, it suggests asking for more details.

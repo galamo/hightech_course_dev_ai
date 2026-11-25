@@ -4,22 +4,13 @@
  * Output: SQL query only (and optionally parameters)
  */
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
-import { ChatOpenAI } from "@langchain/openai";
+import { createChatModel } from "../lib/llm.js";
 
 function createModel() {
-  const openRouterKey = process.env.OPENROUTER_API_KEY;
-  const openaiKey = process.env.OPENAI_API_KEY;
-  if (openRouterKey) {
-    return new ChatOpenAI({
-      model: "openai/gpt-5.5-pro",
-      temperature: 0,
-      configuration: { baseURL: "https://openrouter.ai/api/v1", apiKey: openRouterKey },
-    });
-  }
-  if (openaiKey) {
-    return new ChatOpenAI({ model: "gpt-4o-mini", temperature: 0 });
-  }
-  throw new Error("Set OPENAI_API_KEY or OPENROUTER_API_KEY in .env");
+  return createChatModel({
+    model: process.env.SQL_BASED_MODEL || "openai/gpt-4o-mini",
+    temperature: 0,
+  });
 }
 
 const SYSTEM_PROMPT = `You are a PostgreSQL expert. Given a user question and the relevant database schema, output ONLY a valid PostgreSQL SELECT query. No explanation, no markdown, no code block wrapper.

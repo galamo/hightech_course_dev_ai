@@ -110,3 +110,31 @@ cd client && npm run build   # copies dist/ → server/public/
 - "Find headphones between $200 and $400"
 - "What's the cheapest product?"
 - "Compare the two laptops"
+
+---
+
+## Exercises
+
+### 🟢 Easy — Extend the catalog and the persona
+
+1. Run all 3 parts and try the sample chat prompts above.
+2. In `mcp-server/data/products.js`, add **5 products** in a new type, for example `smartwatch`.
+3. Check that the new type shows up in the table filter (REST) **and** that the bot finds the products (*"Show me smartwatches under $300"*). This is the same handler used two ways.
+4. Change the agent's system prompt so it acts as a friendly sales assistant: it always recommends **one** product and explains why in one sentence.
+
+**Done when:** the new products appear in both the UI table and the chat answers, with no extra code.
+
+### 🟡 Medium — Shopping cart through REST *and* MCP
+
+1. Add cart logic in one place, for example `data/cart.js` with `addToCart`, `removeFromCart` and `getCart`, including a total.
+2. Expose it **twice**, following the lab's key concept:
+   - As REST endpoints (`POST /api/cart`, `GET /api/cart`) used by a small cart panel in the React UI.
+   - As MCP tools (`addToCart`, `getCart`) with Zod input and output schemas.
+3. From the chat, run *"Add the cheapest headphones to my cart and tell me the total"*. The cart panel should update after you refresh it.
+
+**Done when:** an item added in the chat shows up in the UI cart, and an item added in the UI is visible to the bot.
+
+### 🔴 Hard — Real-estate listings, one handler, two front doors
+
+Recreate the "single source of truth exposed as REST + MCP" idea for an **apartment rentals** site.
+Build one filter handler (city, rooms, price range, floor, parking, pets allowed). It should power a listings table in the UI and an MCP tool behind a chatbot that answers *"3 rooms in Tel Aviv under 8,000₪ with parking"*.

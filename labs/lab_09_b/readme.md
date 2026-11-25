@@ -275,4 +275,30 @@ flowchart TD
 
     Z --> R[index.js sends JSON]
 
+---
 
+## Exercises
+
+### 🟢 Easy — Teach the router something new
+
+1. Run the lab and ask 5 questions from [readme.questions.md](readme.questions.md). For each one, write down the `route` you got.
+2. Add a new HTML page to `server/content/`, for example `booking-policy.html` with cancellation rules, opening hours and a max of 2 bookings per user per day. Then run `npm run index-html`.
+3. Ask *"Can I cancel a booking on the same day?"* and check that the answer comes from your page (`html_rag`).
+4. In `server/agents/router-agent.js`, add one line to the router's system prompt so that questions starting with "how many / list / show" always go to `run_sql_agent`. Log the chosen tool and the time each request takes.
+
+**Done when:** your new page is answered through `html_rag`, and the console shows which tool was chosen for each request.
+
+### 🟡 Medium — Add a 4th agent-tool: `build_chart`
+
+1. Add a new router tool, `build_chart`, for questions like *"Show bookings per resource as a bar chart"*.
+2. It calls the existing SQL pipeline to get `rows`, then asks the LLM to return a small **chart spec** (`{ type, labels, values, title }`) through structured output.
+3. Return it with `route: "chart"` and render it in the client with any chart library (Chart.js, Recharts).
+4. Update the router's system prompt so it can tell a *chart* question apart from a *table* question.
+
+**Done when:** a "chart" question draws a chart, while "how many…" questions still return plain SQL answers.
+
+### 🔴 Hard — Clinic operations assistant
+
+Recreate the "router with agents as tools" pattern for a **medical clinic**.
+The docs RAG holds clinic procedures (pre-visit instructions, insurance rules). The SQL agent works over a DB of doctors, appointments and rooms. The third tool should be something other than diagrams, such as a "find next free slot" tool.
+The router must pick the right agent for questions like *"What should I bring to an MRI?"* vs *"Which doctors have free slots tomorrow?"*.

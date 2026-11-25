@@ -76,5 +76,29 @@ The stubs are in `mcp-server/create-ticket-server.js` and each has `TODO` steps.
 }
 ```
 
-# EX1 
-- implement the missing tools and also get_users 
+---
+
+## Exercises
+
+### 🟢 Easy — Use and tweak the ticket MCP
+
+1. Run the backend and the MCP server, open the UI, and connect the MCP server in Cursor or Claude Code (config above).
+2. From the AI client, ask *"Show me the tickets assigned to Dana"*, then *"Create a ticket 'Fix login bug' in the current sprint"*. Check the UI to see the new ticket.
+3. Add an optional `status` filter to the `get_ticket` tool (it's already supported by `GET /api/tickets`) and improve the tool description so the model knows when to use it.
+4. Try calling `create_ticket` **without** the Bearer token and check that the call is rejected.
+
+**Done when:** *"Show all in_review tickets"* returns only `in_review` tickets.
+
+### 🟡 Medium — Implement the missing tools
+
+- Implement the stubs in `mcp-server/create-ticket-server.js`: `close_ticket`, `change_ticket_status` and `delete_ticket`. Follow the `TODO` steps.
+- Add a new tool, `get_users`, that lists users (id, name, email) so the model can resolve names.
+- Every write tool requires the Bearer token. Return `isError` for an unknown ticket id or an invalid status.
+- Test the full flow from the AI client: *"Move ticket 'Fix login bug' to in_review, then close it"*.
+
+**Done when:** every tool in the MCP tools table works and the UI reflects each change.
+
+### 🔴 Hard — Field-service work orders
+
+Recreate the "UI + REST backend + MCP over the API" stack for a **building maintenance / field-service** company.
+The model covers sites, technicians and work orders (priority, SLA deadline, status). The MCP tools should let a dispatcher assistant answer *"Which urgent work orders are about to break SLA?"* and do *"Assign the AC repair in Building B to the nearest free technician"*.

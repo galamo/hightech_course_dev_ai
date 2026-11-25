@@ -84,3 +84,37 @@ lab_09_rag_construction_pricing/
 - `@langchain/openai` – ChatOpenAI (vision), OpenAIEmbeddings
 - `langchain` – MemoryVectorStore (in-memory RAG)
 - `dotenv` – env vars
+
+---
+
+## Exercises
+
+### 🟢 Easy — Make the pricing your own
+
+Run the lab, then change the pricing data and check that the answers change with it.
+
+1. Run `node scripts/run-rag-only.js` and `node index.js ./samples/floorplan.jpg`, and keep the output.
+2. Edit `data/pricing.txt`:
+   - Raise the price of one existing item (for example, wall removal +20%).
+   - Add 3 new items, such as **electrical point**, **flooring per m²** and **interior door replacement**.
+3. Run both commands again. The breakdown should now show the new prices.
+4. In `lib/rag-pipeline.js`, change the number of retrieved chunks (`k`) and the chunk size. Write one line on how each change affects the answer.
+
+**Done when:** your new items appear in the retrieval output, and the image breakdown uses your updated rates.
+
+### 🟡 Medium — Extract → Price → Validate pipeline
+
+Turn the one-shot agent into a chain of agents by building the two agents in `agents/next/`.
+
+1. **Extraction agent.** Input is the image. Output is a **structured** list (a Zod schema) such as `[{ item, quantity, unit, location }]`. It does no pricing.
+2. **Pricing step.** For each item, run a RAG lookup in `pricing.txt` and calculate `quantity × unit price`.
+3. **Pricing-check agent.** It flags items that have **no matching price** in the file and quantities that look unrealistic (for example, 40 bathrooms). Add a final total with **17% VAT** and a 10% contingency line.
+4. Print the result as a table: item | qty | unit price | subtotal | warning.
+
+**Done when:** an item that isn't in the pricing file shows a warning instead of a made-up price.
+
+### 🔴 Hard — Tender (מכרזים) bid agent over RAG
+
+Build a RAG agent that helps a company decide whether to bid on a public tender, and what to submit.
+Index one or two tender documents (requirements, qualification conditions, deadlines and the price form) together with a short company profile. The agent should answer *"Can we bid?"*, produce a **compliance matrix** (requirement → met / missing → evidence from the company profile), list the key deadlines, and draft a price proposal.
+Every claim must quote the tender section it came from.

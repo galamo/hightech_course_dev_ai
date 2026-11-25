@@ -3,27 +3,18 @@
  * (answer_with_html_rag or run_sql_agent) instead of returning a route string.
  */
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
-import { ChatOpenAI } from "@langchain/openai";
 import { DynamicStructuredTool } from "@langchain/core/tools";
 import { z } from "zod";
+import { createChatModel } from "../lib/llm.js";
 import { answerWithHtmlRag } from "./html-rag-agent.js";
 import { runSqlAgent } from "./sql-agent-pipeline.js";
 import { runMermaidMcpAgent } from "./mermaid-mcp-agent.js";
 
 function createModel() {
-  const openRouterKey = process.env.OPENROUTER_API_KEY;
-  const openaiKey = process.env.OPENAI_API_KEY;
-  if (openRouterKey) {
-    return new ChatOpenAI({
-      model: "openai/gpt-4o-mini",
-      temperature: 0,
-      configuration: { baseURL: "https://openrouter.ai/api/v1", apiKey: openRouterKey },
-    });
-  }
-  if (openaiKey) {
-    return new ChatOpenAI({ model: "gpt-4o-mini", temperature: 0 });
-  }
-  throw new Error("Set OPENAI_API_KEY or OPENROUTER_API_KEY in .env");
+  return createChatModel({
+    model: process.env.TESTING_MODEL || "openai/gpt-4o-mini",
+    temperature: 0,
+  });
 }
 
 const ROUTER_SYSTEM_PROMPT = `You are a router. You have exactly three tools. Use exactly one to answer the user's question.

@@ -184,4 +184,29 @@ flowchart TD
 
     Z --> R[index.js sends JSON]
 
+---
 
+## Exercises
+
+### 🟢 Easy — Observe and steer the router
+
+1. Run the lab and send 6 questions: 2 docs questions, 2 DB questions and 2 diagram questions. Record the `route` of each.
+2. Add one HTML page to `server/content/`, for example an FAQ about user roles and permissions. Run `npm run index-html` and ask about it.
+3. Add logging in `server/agents/router-agent.js` for: the chosen tool, the tool arguments, and the total time.
+4. Write one question that gets routed **wrong**, then fix it by improving the tool descriptions, not by adding `if/else`.
+
+**Done when:** your "wrong" question routes correctly after the description change.
+
+### 🟡 Medium — Multi-tool answers + conversation memory
+
+1. Let the router call **more than one tool** for one question. For example, *"What does the admin role allow, and how many admins do we have?"* needs both docs and SQL.
+2. Run all the tool calls, then use one final LLM call to merge the results into a single answer. Return `routes: [...]` instead of a single `route`.
+3. Add short **conversation memory**: send the last 3 turns, so *"and how many of them are active?"* works as a follow-up.
+4. Show the list of tools used in the client.
+
+**Done when:** a mixed question returns one combined answer that used both `html_rag` and `sql_agent`.
+
+### 🔴 Hard — E-commerce customer-support copilot
+
+Recreate the router-with-agent-tools pattern for an **online store support desk**.
+The tools are: a policies RAG (returns, warranty, shipping), a SQL agent over orders and customers, and a mock **shipment-tracking API** tool. The copilot should handle *"Where is my order #1234, and can I still return it?"* by picking and combining the right agents.

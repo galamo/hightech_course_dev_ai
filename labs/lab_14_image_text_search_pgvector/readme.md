@@ -66,3 +66,30 @@ Upload images, extract text/tags/descriptions with an OpenRouter vision model, i
 | `OPENROUTER_EMBEDDING_MODEL` | Optional, default `openai/text-embedding-3-small` |
 | `PG_HOST`, `PG_PORT`, `PG_USER`, `PG_PASSWORD`, `PG_DATABASE` | PostgreSQL connection (defaults match this lab's `docker-compose.yml`: `localhost:5432`, `admin` / `admin123`, `vectordb`) |
 | `PORT` | Server port (default `3003`) |
+
+---
+
+## Exercises
+
+### 🟢 Easy — Index your own images
+
+1. Run the lab and upload 8–10 varied images: a street sign, a receipt, a screenshot, a product photo, a whiteboard.
+2. Search with keywords that are **not** written in the images (for example, "shopping" for a receipt) to see that semantic search works.
+3. Change the search from top **k = 5** to **k = 3**, and add a minimum similarity threshold so weak matches are hidden.
+4. Change the vision prompt in `server/agents/image-index-agent.js` so it also extracts **dominant colors**, then search by color ("something red").
+
+**Done when:** searching for a color returns the right images, and irrelevant results are filtered out.
+
+### 🟡 Medium — Hybrid search (vector + keyword)
+
+1. Add a PostgreSQL full-text column (`tsvector`) built from the extracted text and tags.
+2. In `POST /api/search`, run **both** a vector search and a keyword search, then merge the results. Simple score fusion or Reciprocal Rank Fusion both work.
+3. Return a `matchType` field for each result (`vector`, `keyword` or `both`) and show it as a badge in the UI.
+4. Test with an exact code or number that appears in an image, such as an invoice number. Keyword search should find it even when vector search misses it.
+
+**Done when:** exact-text queries and meaning-based queries both find the right image.
+
+### 🔴 Hard — Expense receipts search
+
+Recreate "image → extract → embed → search" for an **expense-management** product.
+Employees upload receipt photos. The vision agent extracts vendor, date, total, VAT and category. Finance can then ask *"Taxi rides in March over 100₪"* or *"Restaurant receipts without VAT"*, combining semantic search with structured filters.

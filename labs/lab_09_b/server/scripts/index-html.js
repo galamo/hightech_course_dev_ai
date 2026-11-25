@@ -36,7 +36,9 @@ function chunkText(text, chunkSize = 400, overlap = 80) {
       if (lastSpace > chunkSize / 2) slice = slice.slice(0, lastSpace + 1);
     }
     if (slice.trim()) chunks.push(slice.trim());
-    start = end - overlap;
+    if (end >= text.length) break;
+    // Always advance; avoid infinite loop when end - overlap <= start
+    start = Math.max(start + 1, end - overlap);
   }
   return chunks;
 }
@@ -47,12 +49,14 @@ function loadHtmlFiles() {
     return [];
   }
   const files = fs.readdirSync(contentDir).filter((f) => f.endsWith(".html"));
+  console.log("HTML files:", files.length ? files.join(", ") : "(none)");
   const docs = [];
   for (const file of files) {
     const filePath = path.join(contentDir, file);
     const html = fs.readFileSync(filePath, "utf-8");
     const text = htmlToText(html);
     const chunks = chunkText(text);
+    console.log(`  ${file}: ${chunks.length} chunks`);
     for (const content of chunks) {
       docs.push(new Document({ pageContent: content, metadata: { source: file } }));
     }
